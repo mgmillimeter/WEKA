@@ -1,4 +1,4 @@
-# 📃 Methodology (Final Version for Research Paper)
+# 📃 Methodology
 
 This section outlines the step-by-step methodology followed in this study, following the **Knowledge Discovery in Databases (KDD)** process to analyze student performance using WEKA. The process included data selection, cleaning, transformation, modeling, and interpretation using both **classification (J48 decision tree)** and **association rule mining (Apriori)**.
 
