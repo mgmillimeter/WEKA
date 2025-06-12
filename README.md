@@ -1,114 +1,167 @@
-# 📃 Methodology
+# 📊 Multivariate Analysis of Socioeconomic and Educational Factors Influencing Student Performance in Bangladesh
 
-This section outlines the step-by-step methodology followed in this study, following the **Knowledge Discovery in Databases (KDD)** process to analyze student performance using WEKA. The process included data selection, cleaning, transformation, modeling, and interpretation using both **classification (J48 decision tree)** and **association rule mining (Apriori)**.
-
----
-
-## 🔁 Steps in the Knowledge Discovery in Databases (KDD) Process
-
-### 1. Selection (Data Collection)
-
-* Selected the dataset: `bd_students_per_uncleaned.csv`
-* Defined variables of interest: demographic, academic, and family-related features
-* Removed unrelated fields (e.g., student ID, full name)
-
-> 🧠 *We only kept information useful for understanding performance.*
+_Multivariate Analysis of Socioeconomic and Educational Factors Influencing Student Performance in Bangladesh: A Knowledge Discovery in Databases (KDD) Approach_  
 
 ---
 
-### 2. Preprocessing (Data Cleaning)
+## 📝 Abstract
 
-| Task                      | Action Taken                                      | Why It Matters                                          |
-| ------------------------- | ------------------------------------------------- | ------------------------------------------------------- |
-| Remove irrelevant columns | Dropped `id` and `full_name`                      | IDs don’t help in analysis                              |
-| Handle missing values     | Deleted 1 row with missing `location`             | With just 1 missing row, deletion was simpler           |
-| Remove duplicates         | Removed 315 duplicate rows                        | Prevents duplicate patterns from biasing models         |
-| Standardize categories    | Cleaned `location`, `guardian`, `education`, etc. | Ensures values are consistent (e.g., "hons" → "Honors") |
-| Fix attribute names       | Corrected encoding issues like `Ã¥ge` → `age`     | Makes attributes readable and usable in WEKA            |
+Understanding the multifactorial influences on student academic performance is crucial for developing evidence-based educational policies. While innate ability contributes to academic success, socioeconomic and educational factors play substantial roles. This study investigates how parental education, employment, family size, geographic location, study time, attendance, tutoring, extracurricular activities, and internet access influence academic outcomes among secondary school students in Bangladesh. The Knowledge Discovery in Databases (KDD) framework was employed, involving selection, preprocessing, transformation, data mining, and interpretation phases. A structured dataset was extracted from Kaggle, followed by thorough data cleaning, outlier treatment, feature engineering, and multivariate classification using Decision Tree, Random Forest, and Support Vector Machine models. The Decision Tree classifier demonstrated superior performance with 77.7% accuracy, identifying academic group, study time, and attendance as the most significant predictors. The findings contribute to the educational data mining literature and offer practical implications for policymakers and educational institutions in tailoring targeted academic interventions.
+---
 
-Final dataset after cleaning: **8296 rows × 22 attributes**
+## 🔑 Keywords
 
-> 🧼 *Clean data means reliable results.*
+Student Performance, Socioeconomic Factors, Educational Data Mining, Knowledge Discovery in Databases, Bangladesh Education, Machine Learning.
+---
+
+# 1️⃣ Introduction
+
+1.1 Background and Problem Statement
+Academic performance is widely regarded as a multidimensional outcome shaped by numerous interacting factors. Beyond cognitive ability, research highlights the role of external determinants such as socioeconomic status (SES), parental education, school environment, and student habits in influencing learning outcomes (Sirin, 2005; OECD, 2019). These factors are particularly significant in developing countries, where educational inequalities often mirror broader socioeconomic disparities. Bangladesh, like many developing nations, faces challenges in ensuring equitable access to quality education. Policymakers and educators require evidence-based insights to better understand how various social, familial, and institutional factors influence student achievement. Despite numerous studies investigating individual influences, limited research explores the combined, multivariate effects of these variables. Therefore, adopting multivariate analytical approaches becomes essential to reveal complex interdependencies often missed by traditional univariate methods.
+---
+
+# 2️⃣ Literature Review
+
+- Socioeconomic status significantly affects academic achievement ([Sirin, 2005](#references)).
+- Educational data mining (EDM) reveals complex educational relationships ([Romero & Ventura, 2010](#references)).
+- Prior work emphasizes the importance of parental education, school type, tutoring, and attendance ([Hanushek & Woessmann, 2011](#references)).
+- The interaction between multiple variables is underexplored for Bangladesh — this study fills that gap.
 
 ---
 
-### 3. Transformation (Feature Engineering)
+# 3️⃣ Research Objectives
 
-* Created `overall_avg_score` = average of 5 subject scores
-* Generated `performance_category` (Low, Medium, High) using percentile bins in Excel:
-
-  * Low = bottom 33.3%
-  * Medium = middle 33.3%
-  * High = top 33.3%
-
-> 🔁 *We translated raw numbers into labeled categories for easier modeling.*
+1. Investigate how socioeconomic and educational factors affect student academic performance in Bangladesh.
+2. Apply multivariate models to identify the most influential predictors of academic success.
+3. Provide empirical evidence to guide data-driven education policy interventions.
 
 ---
 
-### 4. Data Mining (Modeling in WEKA)
+# 4️⃣ Research Significance
 
-Two versions of the dataset were prepared:
-
-#### Version A – For Classification (J48, Apriori):
-
-* `overall_avg_score` removed (to avoid leaking actual score into model)
-* `performance_category` kept as class attribute
-* Applied this Discretize filter:
-
-  ```
-  Discretize -F -B 3 -M -1.0 -R first-last -precision 6
-  ```
-
-#### Version B – For Numeric Analysis (e.g., Linear Regression):
-
-* `performance_category` removed
-* Kept `overall_avg_score`
-* Applied:
-
-  * `Normalize` to scale numeric values from 0 to 1
-  * `NominalToBinary` to convert categorical data to binary form
-
-> 🛠️ *Different tools require different formats — we prepped both.*
+- Provides actionable insights for policymakers, administrators, and educational institutions.
+- Contributes to the academic field of educational data mining.
+- Demonstrates practical application of the Knowledge Discovery in Databases (KDD) framework on real-world educational data.
 
 ---
 
-### 5. Interpretation & Evaluation (Results)
+# 5️⃣ Methodology: Knowledge Discovery in Databases (KDD)
 
-#### 📌 J48 Decision Tree (Classification)
+### 5.1 Selection (Data Collection)
+- **Source:** [Kaggle - Bangladesh Student Performance EDA](https://www.kaggle.com/code/ashikshahriar/bangladesh-student-performance-eda/input)
+- **Sample size:** 8,608 students
+- **Variables:** academic scores, parental education and occupation, demographics, study time, attendance, tutoring, internet access, extracurricular activities.
 
-* Accuracy: **96.08%**
-* Key insights:
+### 5.2 Preprocessing (Data Cleaning)
+- Mode imputation for missing values (location).
+- Categorical inconsistencies standardized (capitalization, merging Hons→Honors).
+- Outliers detected using IQR method; academic outliers retained, age filtered to 13-20 years.
+- No duplicates found.
 
-  * If `stu_group = Science` and `studytime > 5`, performance = High
-  * If `stu_group = Arts` and `studytime <= 3.5`, performance = Low
-  * High `attendance` compensates for low study time
+### 5.3 Transformation (Feature Engineering)
+- Generated `Total Score` (sum of subject scores).
+- Derived `Performance Category` (Low, Average, High) using 20th & 80th percentiles.
+- Applied one-hot encoding to categorical features.
 
-> 🌳 *The tree shows how each factor affects student outcomes in a visual, step-by-step path.*
+### 5.4 Data Mining (Modeling)
+- Models applied:
+  - Decision Tree (J48)
+  - Random Forest
+  - Support Vector Machine (SVM)
+- 80/20 train-test split; evaluation via accuracy and F1-score.
 
-#### 📌 Apriori (Association Rules)
-
-* Goal: Identify frequent, confident rules about performance
-* Applied to nominal dataset using:
-
-  ```
-  Apriori -N 10 -C 0.9 -M 0.1 -c 17
-  ```
-* Top rules:
-
-  * If `studytime = Low` AND `stu_group = Arts` → `performance = Low` (99% confidence)
-  * If `studytime = High` → `stu_group = Science AND performance = High` (98–99%)
-
-> 📋 *These rules are easy to explain and great for policy decisions.*
+### 5.5 Interpretation & Evaluation
+- Extracted feature importance and decision rules.
+- Compared findings against prior educational literature.
+- Identified actionable insights for educational interventions.
 
 ---
 
-## ✅ Summary Table: Why These Methods Were Used
+# 6️⃣ Results and Discussion
 
-| Step             | Purpose                        | Tool Used    | Why It’s Important                                               |
-| ---------------- | ------------------------------ | ------------ | ---------------------------------------------------------------- |
-| Data Cleaning    | Ensure data is clean and valid | Manual/Excel | Prevents garbage in, garbage out                                 |
-| Feature Creation | Add interpretable indicators   | Excel        | Allows classification and numeric modeling                       |
-| J48              | Predict performance outcomes   | WEKA         | Visual and accurate classifier for decision support              |
-| Apriori          | Discover frequent patterns     | WEKA         | Easy-to-read rules that help spot common risk or success factors |
+### 6.1 Descriptive Statistics
 
-> 🧩 This combined method supports clear, explainable, and actionable education insights.
+| Variable | Mean | SD | Min | Max |
+| -------- | ---- | -- | --- | --- |
+| Total Score | 291 | 65 | 54 | 500 |
+| Study Time (hours/day) | 4.2 | 1.8 | 0 | 10 |
+| Attendance (%) | 80 | 15 | 0 | 100 |
+| Age (years) | 16.5 | 1.7 | 13 | 20 |
+
+### 6.2 Model Performance
+
+| Model | Accuracy (%) |
+| ----- | ------------- |
+| Decision Tree | **77.7** |
+| Random Forest | 77.6 |
+| SVM | 66.3 |
+
+### 6.3 Top Predictors (Feature Importance)
+
+| Rank | Feature | Importance (%) |
+| ---- | ------- | --------------- |
+| 1 | Academic Group (Commerce/Science) | 44% |
+| 2 | Study Time | 9.6% |
+| 3 | Attendance | 0.4% |
+| 4 | Extracurricular Participation | 0.7% |
+| 5 | Guardian Type | 0.2% |
+| 6 | Parental Involvement | 0.15% |
+| 7 | Father’s Job | 0.09% |
+
+### 6.4 Extracted Decision Rules
+
+- Science students + ≥6 hours/day study + high attendance → High Performance.
+- Commerce students + low study time + poor attendance → Low Performance.
+
+---
+
+# 7️⃣ Practical Implications
+
+- **For schools:** Emphasize study habits, extracurricular activities, attendance monitoring.
+- **For policymakers:** Implement study skill programs, parental involvement initiatives.
+- **For researchers:** Demonstrate practical application of KDD + ML in education policy.
+
+---
+
+# 8️⃣ Limitations
+
+- Kaggle data may not fully represent national population.
+- Cross-sectional dataset limits causal inference.
+- Psychological, motivational, and cognitive factors not included.
+
+---
+
+# 9️⃣ Future Research
+
+- Expand to national-level longitudinal datasets.
+- Include psychological, motivational, and emotional variables.
+- Apply ensemble ML models and deep learning.
+- Cross-country comparative studies.
+
+---
+
+# 🔬 Tools Used
+
+- **WEKA 3.8.6** (J48 Decision Tree, Random Forest, SVM)
+- **Python (pandas, scikit-learn, docx, matplotlib)** (Preprocessing, Reporting)
+- **Excel** (Manual data cleaning and transformation)
+- **WebGraphviz** (Decision Tree visualization)
+
+---
+
+# 📚 References
+
+- Sirin, S. R. (2005). Socioeconomic status and academic achievement: A meta-analytic review. *Review of Educational Research, 75*(3), 417–453.
+- Romero, C., & Ventura, S. (2010). Educational data mining: A review of the state of the art. *IEEE Transactions on Systems, Man, and Cybernetics, Part C*, 40(6), 601–618.
+- Hanushek, E. A., & Woessmann, L. (2011). The economics of international differences in educational achievement. *Handbook of the Economics of Education*, 3, 89–200.
+- Coleman, J. S., et al. (1966). *Equality of Educational Opportunity*. U.S. Dept. Health, Education, and Welfare.
+- OECD. (2019). *PISA 2018 Results: What Students Know and Can Do*. OECD Publishing.
+- Siemens, G., & Baker, R. S. (2012). Learning analytics and educational data mining: Towards communication and collaboration. *Proc. of the 2nd International Conf. on Learning Analytics and Knowledge*, 252–254.
+
+---
+
+# ⚠ License
+
+This project is intended for academic and educational research purposes. For non-commercial use only.
+
+---
